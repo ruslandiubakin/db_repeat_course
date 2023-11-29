@@ -1,3 +1,5 @@
 perenos_bd_na_7_semester/
 data/
 *.pdf
+lab2/__pycache__
+lab1/execution_time.txt
