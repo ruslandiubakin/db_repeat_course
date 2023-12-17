@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine, MetaData, Table, select, literal, union, cast, String
 import pandas as pd
-from my_app.new_database_structure import *
-from my_app.service_worker.sql_queues import *
+from new_database_structure import *
+from sql_queues import *
 
 
 old_engine = create_engine('postgresql://postgres:postgres@localhost/results_zno')
@@ -277,58 +277,62 @@ select_results_of_students = union(
     select_st_Sp
 )
 
+def main():
+    with old_engine.connect() as old_connection, new_engine.connect() as new_connection:
+        info_students = old_connection.execute(select_info_students)
+        info_students_rows = info_students.fetchall()
 
-with old_engine.connect() as old_connection, new_engine.connect() as new_connection:
-    info_students = old_connection.execute(select_info_students)
-    info_students_rows = info_students.fetchall()
+        for row in info_students_rows:
+            insert_query = table_students_new.insert().values(
+                ID=row.OUTID,
+                Birth=row.BIRTH,
+                SexTypeName=row.SEXTYPENAME,
+                RegName=row.REGNAME,
+                AreaName=row.AREANAME,
+                TerName=row.TERNAME,
+                RegTypeName=row.REGTYPENAME,
+                TerTypeName=row.TERTYPENAME,
+                ClassProfileName=row.CLASSPROFILENAME,
+                ClassLangName=row.CLASSLANGNAME
+            )
+            new_connection.execute(insert_query)
 
-    for row in info_students_rows:
-        insert_query = table_students_new.insert().values(
-            ID=row.OUTID,
-            Birth=row.BIRTH,
-            SexTypeName=row.SEXTYPENAME,
-            RegName=row.REGNAME,
-            AreaName=row.AREANAME,
-            TerName=row.TERNAME,
-            RegTypeName=row.REGTYPENAME,
-            TerTypeName=row.TERTYPENAME,
-            ClassProfileName=row.CLASSPROFILENAME,
-            ClassLangName=row.CLASSLANGNAME
-        )
-        new_connection.execute(insert_query)
+        for row in subjects:
+            insert_query = table_subjects.insert().values(row)
+            new_connection.execute(insert_query)
 
-    for row in subjects:
-        insert_query = table_subjects.insert().values(row)
-        new_connection.execute(insert_query)
+        results_of_students = old_connection.execute(select_results_of_students)
+        results_of_students_rows = results_of_students.fetchall()
 
-    results_of_students = old_connection.execute(select_results_of_students)
-    results_of_students_rows = results_of_students.fetchall()
+        for row in results_of_students_rows:
+            insert_query = table_results_of_students.insert().values(row)
+            new_connection.execute(insert_query)
 
-    for row in results_of_students_rows:
-        insert_query = table_results_of_students.insert().values(row)
-        new_connection.execute(insert_query)
+        old_connection.execute(insert_students)
+        old_connection.execute(insert_subjects)
+        
+        old_connection.execute(insert_educational_institutions)
+        query = 'SELECT * FROM "Educational_Institutions";'
+        df = pd.read_sql_query(query, old_engine)
+        df.to_sql('Educational_Institutions', new_engine, if_exists='append', index=False)
 
-    old_connection.execute(insert_students)
-    old_connection.execute(insert_subjects)
-    
-    old_connection.execute(insert_educational_institutions)
-    query = 'SELECT * FROM "Educational_Institutions";'
-    df = pd.read_sql_query(query, old_engine)
-    df.to_sql('Educational_Institutions', new_engine, if_exists='append', index=False)
+        old_connection.execute(insert_ei_of_students)
+        query = 'SELECT * FROM "EI_of_Students";'
+        df = pd.read_sql_query(query, old_engine)
+        df.to_sql('EI_of_Students', new_engine, if_exists='append', index=False)
 
-    old_connection.execute(insert_ei_of_students)
-    query = 'SELECT * FROM "EI_of_Students";'
-    df = pd.read_sql_query(query, old_engine)
-    df.to_sql('EI_of_Students', new_engine, if_exists='append', index=False)
+        old_connection.execute(insert_zno_places)
+        query = 'SELECT * FROM "ZNO_Places";'
+        df = pd.read_sql_query(query, old_engine)
+        df.to_sql('ZNO_Places', new_engine, if_exists='append', index=False)
 
-    old_connection.execute(insert_zno_places)
-    query = 'SELECT * FROM "ZNO_Places";'
-    df = pd.read_sql_query(query, old_engine)
-    df.to_sql('ZNO_Places', new_engine, if_exists='append', index=False)
+        old_connection.execute('DROP TABLE "ZNO_Places";')
+        old_connection.execute('DROP TABLE "Results_Of_Students";')
+        old_connection.execute('DROP TABLE "EI_of_Students";')
+        old_connection.execute('DROP TABLE "Subjects";')
+        old_connection.execute('DROP TABLE "Students";')
+        old_connection.execute('DROP TABLE "Educational_Institutions";')
 
-    old_connection.execute('DROP TABLE "ZNO_Places";')
-    old_connection.execute('DROP TABLE "Results_Of_Students";')
-    old_connection.execute('DROP TABLE "EI_of_Students";')
-    old_connection.execute('DROP TABLE "Subjects";')
-    old_connection.execute('DROP TABLE "Students";')
-    old_connection.execute('DROP TABLE "Educational_Institutions";')
+
+if __name__ == "__main__":
+    main()
