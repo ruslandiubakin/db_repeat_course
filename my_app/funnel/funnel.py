@@ -124,46 +124,10 @@ def load_to_database():
             else: 
                 print("Could not connect to database.")
                 break
-
-# def exec_query_7():
-#     # Запит варіанту 7. Порівняти  найкращий  бал  з  Математики  у  кожному  регіоні  у  2021  та  2019  роках  серед тих кому було зараховано тест.
-
-#     query_7 = sql.SQL('''
-#         SELECT "REGNAME", 
-#             MAX(CASE WHEN "YEAR" = 2021 THEN "MATHBALL100" END) AS max_mathball_2021, 
-#             MAX(CASE WHEN "YEAR" = 2019 THEN "MATHBALL100" END) AS max_mathball_2019
-#         FROM "Results_ZNO"
-#         WHERE "MATHTESTSTATUS" = 'Зараховано'
-#         GROUP BY "REGNAME";
-#     ''')
-
-#     conn = psycopg2.connect(database=DATABASE_NAME,
-#                             user=USERNAME, 
-#                             password=PASSWORD,
-#                             host = HOST,
-#                             port = PORT)
-
-#     # Виконання запиту №7
-#     with conn.cursor() as cursor:
-#         cursor.execute(query_7)
-
-#         # Створення або відкриття файлу results.csv та записування до нього результату запиту №7.
-#         with open('result.csv', 'w', newline='') as f:
-#             writer = csv.writer(f)
-#             writer.writerow([i[0] for i in cursor.description]) # запис заголовку таблиці
-#             writer.writerows(cursor.fetchall()) # запис даних таблиці
   
 
 def main():
-    start_time = time.time()
     load_to_database()
-    end_time = time.time()
-
-    execution_time = (end_time - start_time) / 60
-    with open('lab1/execution_time.txt', 'w') as file:
-        file.write(str(execution_time))
-
-    # exec_query_7()
 
 
 if __name__ == "__main__":
