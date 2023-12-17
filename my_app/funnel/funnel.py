@@ -4,7 +4,6 @@ from psycopg2.extras import execute_batch
 import pandas as pd
 import re
 import time
-import csv
 
 
 FILE_PATHS = [
