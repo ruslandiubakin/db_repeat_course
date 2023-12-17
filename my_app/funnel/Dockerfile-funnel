@@ -1,0 +1,14 @@
+# Використовуємо базовий образ Python
+FROM python:3.9
+
+# Встановлюємо залежності
+RUN pip install psycopg2-binary pandas
+
+# Копіюємо файли проекту в контейнер
+COPY . /funnel
+
+# Встановлюємо робочу директорію
+WORKDIR /funnel
+
+# Запускаємо вашу програму при старті контейнера
+CMD ["python", "funnel.py"]

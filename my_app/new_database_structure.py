@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, Float, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
-from sql_queues import *
+from my_app.service_worker.sql_queues import *
 
 Base = declarative_base()
 

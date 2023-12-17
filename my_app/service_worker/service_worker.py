@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine, MetaData, Table, select, literal, union, cast, String
 import pandas as pd
-from new_database_structure import *
-from sql_queues import *
+from my_app.new_database_structure import *
+from my_app.service_worker.sql_queues import *
 
 
 old_engine = create_engine('postgresql://postgres:postgres@localhost/results_zno')

@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 from prettytable import PrettyTable
-from new_database_structure import Base, Student, EducationalInstitution, EIOfStudent, Subject, ZNOPlace, ResultsOfStudent
+from my_app.new_database_structure import Base, Student, EducationalInstitution, EIOfStudent, Subject, ZNOPlace, ResultsOfStudent
 
 
 # Підключення до бази даних
