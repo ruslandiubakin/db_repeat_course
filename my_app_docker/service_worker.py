@@ -4,8 +4,8 @@ from new_database_structure import *
 from sql_queues import *
 
 
-old_engine = create_engine('postgresql://postgres:postgres@localhost/results_zno')
-new_engine = create_engine('postgresql://postgres:postgres@localhost/results_zno_new')
+old_engine = create_engine('postgresql://postgres:postgres@postgres/results_zno')
+new_engine = create_engine('postgresql://postgres:postgres@postgres/results_zno_new')
 
 Base.metadata.create_all(old_engine)
 
@@ -309,25 +309,25 @@ try:
                         insert_query = table_results_of_students.insert().values(row)
                         new_connection.execute(insert_query)
 
-                # new_connection.commit()
+                new_connection.commit()
                 
                 old_connection.execute(insert_students)
                 old_connection.execute(insert_subjects)
                 
                 old_connection.execute(insert_educational_institutions)
-                # old_connection.commit()
+                old_connection.commit()
                 query = 'SELECT * FROM "Educational_Institutions";'
                 df = pd.read_sql_query(query, old_engine)
                 df.to_sql('Educational_Institutions', new_engine, if_exists='append', index=False)
 
                 old_connection.execute(insert_ei_of_students)
-                # old_connection.commit()
+                old_connection.commit()
                 query = 'SELECT * FROM "EI_of_Students";'
                 df = pd.read_sql_query(query, old_engine)
                 df.to_sql('EI_of_Students', new_engine, if_exists='append', index=False)
 
                 old_connection.execute(insert_zno_places)
-                # old_connection.commit()
+                old_connection.commit()
                 query = 'SELECT * FROM "ZNO_Places";'
                 df = pd.read_sql_query(query, old_engine)
                 df.to_sql('ZNO_Places', new_engine, if_exists='append', index=False)
@@ -339,7 +339,7 @@ try:
                 old_connection.execute(text('DROP TABLE "Students";'))
                 old_connection.execute(text('DROP TABLE "Educational_Institutions";'))
 
-                # old_connection.commit()
+                old_connection.commit()
 except Exception as e:
         print(f"An error occurred: {e}")
 finally:

@@ -1,14 +1,12 @@
 # Використовуємо базовий образ Python
-FROM python:3.9
+FROM python:latest
 
 # Встановлюємо залежності
 RUN pip install psycopg2-binary pandas
 
 # Копіюємо файли проекту в контейнер
-COPY . /funnel
+ADD funnel.py /app/
+ADD data/Odata2021File.csv /app/data/
 
 # Встановлюємо робочу директорію
-WORKDIR /funnel
-
-# Запускаємо вашу програму при старті контейнера
-CMD ["python", "funnel.py"]
+WORKDIR /app

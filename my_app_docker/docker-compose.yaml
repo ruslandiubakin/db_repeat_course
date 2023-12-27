@@ -1,0 +1,75 @@
+version: '3'
+
+
+services:
+
+  postgres:
+    image: postgres:15.5
+    restart: always
+    container_name: postgres-db-results-zno
+    environment:
+      POSTGRES_DB: results_zno
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - zno
+
+  pgadmin:
+    container_name: pgadmin4
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: noemail@noemail.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - '5050:80'
+    networks:
+      - zno
+
+  funnel:
+    build: 
+      dockerfile: Dockerfile-funnel
+    command: python funnel.py
+    environment:
+      - HOST_DB=postgres
+    depends_on:
+      - postgres
+    networks:
+      - zno
+    volumes:
+     - ./funnel.py:/app/funnel.py
+    
+  service_worker:
+    build: 
+      dockerfile: Dockerfile-service_worker
+    environment:
+      - HOST_DB=postgres
+    depends_on:
+      - postgres
+    networks:
+      - zno
+    volumes:
+      - ./service_worker.py:/app/service_worker.py
+      - ./alembic.ini:/app/alembic.ini
+      - ./migrations/:/app/migrations/
+      - ./sql_queues.py:/app/sql_queues.py
+      - ./new_database_structure.py:/app/new_database_structure.py
+
+  consumer:
+    build: 
+      dockerfile: Dockerfile-consumer
+    stdin_open: true
+    tty: true
+    command: python consumer.py
+    environment:
+      - HOST_DB=postgres
+    depends_on:
+      - postgres
+    networks:
+      - zno
+    volumes:
+      - ./consumer.py:/app/consumer.py
+    
+networks:
+  zno:

@@ -1,0 +1,13 @@
+FROM python:latest
+
+RUN pip install sqlalchemy pandas psycopg2 alembic
+
+ADD service_worker.py /app/
+ADD new_database_structure.py /app/
+ADD sql_queues.py /app/
+ADD alembic.ini /app/
+ADD migrations/ /app/migrations/
+
+WORKDIR /app
+
+CMD alembic upgrade head && python service_worker.py

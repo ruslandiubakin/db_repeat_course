@@ -1,0 +1,9 @@
+FROM python:latest
+
+RUN pip install sqlalchemy prettytable psycopg2
+
+ADD consumer.py /app/
+ADD new_database_structure.py /app/
+ADD sql_queues.py /app/
+
+WORKDIR /app

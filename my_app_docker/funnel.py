@@ -7,7 +7,7 @@ import time
 
 
 FILE_PATHS = [
-            ['my_app\\data\\Odata2021File.csv', 'UTF-8-SIG'],
+            ['/app/data/Odata2021File.csv', 'UTF-8-SIG'],
 ]
 
 
@@ -17,7 +17,7 @@ TABLE_NAME = 'Results_ZNO_2021'
 DATABASE_NAME = 'results_zno'
 USERNAME = 'postgres'
 PASSWORD = 'postgres'
-HOST = 'localhost'
+HOST = 'postgres'
 PORT = '5432'
 
 
