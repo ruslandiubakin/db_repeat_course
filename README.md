@@ -5,7 +5,7 @@
 - Посиланна на датасет: https://drive.google.com/file/d/1aE73zhmWOPZySmrSFMhKeth_UwA7T1gR/view?usp=sharing
 - Датасет помістити за шляхом: 
     - db_repeat_course/my_app/data/
-    - db_repeat_course/my_app_docker/
+    - db_repeat_course/my_app_docker/data/
 
 # Інструкція по запуску
 ## my_app
